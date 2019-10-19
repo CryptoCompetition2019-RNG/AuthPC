@@ -21,7 +21,7 @@ public class PcAuthHandler extends AbstractHandler {
 
     public BufferedImage getQrcodeImage(){return qrcodeImage;}
 
-    private boolean pcGenerateQRCode() {
+    private boolean pcAuthGenerateQRCode() {
         qrcodeImage = QRCodeWrapper.createQRCode(username + randomToken);
         return qrcodeImage != null;
     }
@@ -85,13 +85,13 @@ public class PcAuthHandler extends AbstractHandler {
         BigInteger randomBInt = new BigInteger(256, new Random());
         randomToken = ConvertUtils.zeroRPad(randomBInt.toString(16), 64);
 
-        if(!this.pcGenerateQRCode()){
-            logger.error("Generate qrcode failed");
-            return;
-        }
         sessionKeyHandler = new SessionKeyHandler();
         if (!sessionKeyHandler.checkStatus()) {
             logger.error("Failed when negotiate session key.");
+            return;
+        }
+        if(!this.pcAuthGenerateQRCode()){
+            logger.error("Generate qrcode failed");
             return;
         }
 
