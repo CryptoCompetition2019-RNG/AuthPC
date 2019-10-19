@@ -11,10 +11,8 @@ import java.net.URL;
 public class HttpUtil {
     private static final Logger logger = LoggerFactory.getLogger(HttpUtil.class);
 
-    private static final String serverUrl = "http://127.0.0.1:8000";
-
     public static JSONObject sendPostRequest(String requestRoute, JSONObject requestJson) {
-        String requestUrl = serverUrl + requestRoute;
+        String requestUrl = NetworkContant.serverUrl + requestRoute;
         String requestData = requestJson.toString();
         try
         {
@@ -30,7 +28,7 @@ public class HttpUtil {
 
             if(connection.getResponseCode() != 200)
             {
-                logger.error(String.format("Http request %s failed!", serverUrl));
+                logger.error(String.format("Http request %s failed!", NetworkContant.serverUrl));
                 return null;
             }
 
