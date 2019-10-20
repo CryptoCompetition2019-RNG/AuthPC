@@ -9,11 +9,18 @@ import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
+import com.auth.NetworkUtils.DynamicAuthHandler;
 
 public class QRcodeFailure extends JFrame implements MouseListener {
 
@@ -31,24 +38,24 @@ public class QRcodeFailure extends JFrame implements MouseListener {
 	public QRcodeFailure() {
 
 		// 实例化
-		bacgrangd = new JLabel(new ImageIcon("素材//1.gif"));
-		jan = new JLabel(new ImageIcon("素材//最小化.png"));
-		bi = new JLabel(new ImageIcon("素材//关闭.png"));
-		//PP = new JLabel(new ImageIcon("素材//pp.png"));
+		bacgrangd = new JLabel(new ImageIcon("src//main//resources//image//1.gif"));
+		jan = new JLabel(new ImageIcon("src//main//resources//image//最小化.png"));
+		bi = new JLabel(new ImageIcon("src//main//resources//image//关闭.png"));
+		//PP = new JLabel(new ImageIcon("src//main//resources//image//pp.png"));
 		pp = new JLabel("TRNG");
 		an1 = new JLabel();
 		an2 = new JLabel();// 暗调
-		//tu = new JLabel(new ImageIcon("素材//头像1.png"));
+		//tu = new JLabel(new ImageIcon("src//main//resources//image//头像1.png"));
 		user = new JTextField();
-		su1 = new JLabel(new ImageIcon("素材//1.png"));
-		lie1 = new JLabel(new ImageIcon("素材//直线2.png"));
+		su1 = new JLabel(new ImageIcon("src//main//resources//image//1.png"));
+		lie1 = new JLabel(new ImageIcon("src//main//resources//image//直线2.png"));
 		bgcolor = new JPanel();
 		text3 = new JLabel("二维码获取失败，请检查账号是否正确");
 		text4 = new JLabel("注册账号");
 		text5 = new JLabel("获取二维码");
 		submit = new JLabel();
-		fp = new JLabel(new ImageIcon("素材//fingerprint.png"));
-		ma = new JLabel(new ImageIcon("素材//lock.png"));
+		fp = new JLabel(new ImageIcon("src//main//resources//image//fingerprint.png"));
+		ma = new JLabel(new ImageIcon("src//main//resources//image//lock.png"));
 
 		// 位置
 		bacgrangd.setBounds(-35, -123, 500, 250);
@@ -114,8 +121,8 @@ public class QRcodeFailure extends JFrame implements MouseListener {
 		user.addFocusListener(new FocusListener() {
 
 			public void focusLost(FocusEvent e) {// 失去焦点
-				su1.setIcon(new ImageIcon("素材//1.png"));
-				lie1.setIcon(new ImageIcon("素材//直线2.png"));
+				su1.setIcon(new ImageIcon("src//main//resources//image//1.png"));
+				lie1.setIcon(new ImageIcon("src//main//resources//image//直线2.png"));
 				c = 0;
 				if (user.getText().isEmpty()) {// 判断是否为空（为了设置默认提示语）
 					user.setForeground(Color.gray);
@@ -125,11 +132,11 @@ public class QRcodeFailure extends JFrame implements MouseListener {
 
 			public void focusGained(FocusEvent e) {// 得到焦点
 				user.setForeground(Color.black);
-				lie1.setIcon(new ImageIcon("素材//直线3.png"));
+				lie1.setIcon(new ImageIcon("src//main//resources//image//直线3.png"));
 				a = 1;
 				c = 1;
 				b = 0;
-				su1.setIcon(new ImageIcon("素材//1.png"));
+				su1.setIcon(new ImageIcon("src//main//resources//image//1.png"));
 				if (user.getText().equals("账号")) {
 					user.setText("");
 				} else {
@@ -159,7 +166,7 @@ public class QRcodeFailure extends JFrame implements MouseListener {
 		getContentPane().add(bacgrangd);
 
 		this.setSize(430, 330);
-		this.setIconImage(Toolkit.getDefaultToolkit().createImage("素材\\透明照片.png"));// 窗体图标
+		this.setIconImage(Toolkit.getDefaultToolkit().createImage("src//main//resources//image\\透明照片.png"));// 窗体图标
 		this.setLocationRelativeTo(null);// 保持居中
 		this.setUndecorated(true);// 去顶部
 		this.setFocusable(true);// 面板首先获得焦点
@@ -195,10 +202,23 @@ public class QRcodeFailure extends JFrame implements MouseListener {
 			dispose();
 			
 			String users = user.getText();
-			if (users.equals("user1")) {
+			if (users != null && users.length() != 0) {
+				DynamicAuthHandler dynamicAuthHandler = new DynamicAuthHandler(users);
+		        BufferedImage bufferedImage = dynamicAuthHandler.getQrcodeImage();
+		        //assertNotNull(bufferedImage);
+		        // 应该在界面上展示这个二维码
+
+		        // 忙等待。用户应该在一分钟内扫描二维码，否则回抛出 assert 异常
+		        //while(dynamicAuthHandler.checkStatus());
+		        try {
+					ImageIO.write(bufferedImage, "png", new File("src\\main\\resources\\image\\qrcode.png"));
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				new QRcodeLog();
 			} else {
-				new QRcodeFailure();
+		        new QRcodeFailure();
 			}
 			
 		}
@@ -211,14 +231,14 @@ public class QRcodeFailure extends JFrame implements MouseListener {
 			an2.setOpaque(true);
 		} else if (e.getSource() == user) {
 			if (a == 0 && c == 0) {
-				lie1.setIcon(new ImageIcon("素材//直线4.png"));
+				lie1.setIcon(new ImageIcon("src//main//resources//image//直线4.png"));
 			}
 		} else if (e.getSource() == text4) {
 			text4.setForeground(Color.GRAY);
 		} else if (e.getSource() == fp) {
-			fp.setIcon(new ImageIcon("素材//fingerprint.png"));
+			fp.setIcon(new ImageIcon("src//main//resources//image//fingerprint.png"));
 		}else if (e.getSource() == ma) {
-			ma.setIcon(new ImageIcon("素材//lock.png"));
+			ma.setIcon(new ImageIcon("src//main//resources//image//lock.png"));
 		}
 	}
 
@@ -229,14 +249,14 @@ public class QRcodeFailure extends JFrame implements MouseListener {
 			an2.setOpaque(false);
 		} else if (e.getSource() == user) {
 			if (a == 0) {
-				lie1.setIcon(new ImageIcon("素材//直线2.png"));
+				lie1.setIcon(new ImageIcon("src//main//resources//image//直线2.png"));
 			}
 		} else if (e.getSource() == text4) {
 			text4.setForeground(new Color(170, 170, 170));
 		} else if (e.getSource() == fp) {
-			fp.setIcon(new ImageIcon("素材//fingerprint.png"));
+			fp.setIcon(new ImageIcon("src//main//resources//image//fingerprint.png"));
 		} else if (e.getSource() == ma) {
-			ma.setIcon(new ImageIcon("素材//lock.png"));
+			ma.setIcon(new ImageIcon("src//main//resources//image//lock.png"));
 		}
 
 	}

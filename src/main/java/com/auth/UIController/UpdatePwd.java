@@ -24,16 +24,16 @@ public class UpdatePwd extends JFrame implements MouseListener {
 	public UpdatePwd() {
 
 		// 实例化
-		bacgrangd = new JLabel(new ImageIcon("素材//1.gif"));
-		jan = new JLabel(new ImageIcon("素材//最小化.png"));
-		bi = new JLabel(new ImageIcon("素材//关闭.png"));
+		bacgrangd = new JLabel(new ImageIcon("src//main//resources//image//1.gif"));
+		jan = new JLabel(new ImageIcon("src//main//resources//image//最小化.png"));
+		bi = new JLabel(new ImageIcon("src//main//resources//image//关闭.png"));
 		pp = new JLabel("TRNG");
 		an1 = new JLabel();
 		an2 = new JLabel();
 		bgcolor = new JPanel();
 		text1 = new JLabel("请扫描二维码更改密码");
 		text2 = new JLabel("返回");
-		qrcode = new JLabel(new ImageIcon("素材//QRCode.png"));
+		qrcode = new JLabel(new ImageIcon("src//main//resources//image//QRCode.png"));
 
 		// 位置
 		bacgrangd.setBounds(-35, -123, 500, 250);
@@ -93,7 +93,7 @@ public class UpdatePwd extends JFrame implements MouseListener {
 		getContentPane().add(bacgrangd);
 
 		this.setSize(430, 330);
-		this.setIconImage(Toolkit.getDefaultToolkit().createImage("素材\\透明照片.png"));// 窗体图标
+		this.setIconImage(Toolkit.getDefaultToolkit().createImage("src//main//resources//image\\透明照片.png"));// 窗体图标
 		this.setLocationRelativeTo(null);// 保持居中
 		this.setUndecorated(true);// 去顶部
 		this.setFocusable(true);// 面板首先获得焦点

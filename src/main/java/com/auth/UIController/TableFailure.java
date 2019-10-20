@@ -24,9 +24,9 @@ public class TableFailure extends JFrame implements MouseListener {
 	public TableFailure() {
 
 		// 实例化
-		bacgrangd = new JLabel(new ImageIcon("素材//1.gif"));
-		jan = new JLabel(new ImageIcon("素材//最小化.png"));
-		bi = new JLabel(new ImageIcon("素材//关闭.png"));
+		bacgrangd = new JLabel(new ImageIcon("src//main//resources//image//1.gif"));
+		jan = new JLabel(new ImageIcon("src//main//resources//image//最小化.png"));
+		bi = new JLabel(new ImageIcon("src//main//resources//image//关闭.png"));
 		pp = new JLabel("TRNG");
 		an1 = new JLabel();
 		an2 = new JLabel();
@@ -102,7 +102,7 @@ public class TableFailure extends JFrame implements MouseListener {
 		getContentPane().add(bacgrangd);
 
 		this.setSize(430, 330);
-		this.setIconImage(Toolkit.getDefaultToolkit().createImage("素材\\透明照片.png"));// 窗体图标
+		this.setIconImage(Toolkit.getDefaultToolkit().createImage("src//main//resources//image\\透明照片.png"));// 窗体图标
 		this.setLocationRelativeTo(null);// 保持居中
 		this.setUndecorated(true);// 去顶部
 		this.setFocusable(true);// 面板首先获得焦点

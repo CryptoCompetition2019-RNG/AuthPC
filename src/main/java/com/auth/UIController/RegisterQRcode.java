@@ -15,20 +15,20 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-public class QRcodeLog extends JFrame implements MouseListener {
+public class RegisterQRcode extends JFrame implements MouseListener {
 
 	JLabel bacgrangd, jan, bi, PP, pp, tu;// gif,最小化，关闭，logo，QQ，头像
 	JLabel an1, an2, lie1;// 暗色块|线
 	JTextField user;// 账号
 	JPanel bgcolor;// 白
 	JLabel su1;// 缩略图
-	JLabel text4, text5;// 注册账号，获取二维码
+	JLabel text4, text5;// 请扫码注册，获取二维码
 	static Point origin = new Point();// 变量，用于可拖动窗体
 	int a = 0, b = 0, c = 0, d = 0;// 控制线
 	int f = 0, g = 0, h = 0, j = 0;// 控制√
 	JLabel submit, fp, ma, qrcode;;// 背景
 
-	public QRcodeLog() {
+	public RegisterQRcode() {
 
 		// 实例化
 		bacgrangd = new JLabel(new ImageIcon("src//main//resources//image//1.gif"));
@@ -43,7 +43,7 @@ public class QRcodeLog extends JFrame implements MouseListener {
 		su1 = new JLabel(new ImageIcon("src//main//resources//image//1.png"));
 		lie1 = new JLabel(new ImageIcon("src//main//resources//image//直线2.png"));
 		bgcolor = new JPanel();
-		text4 = new JLabel("注册账号");
+		text4 = new JLabel("请扫码注册");
 		text5 = new JLabel("获取二维码");
 		submit = new JLabel();
 		fp = new JLabel(new ImageIcon("src//main//resources//image//fingerprint.png"));
@@ -61,7 +61,7 @@ public class QRcodeLog extends JFrame implements MouseListener {
 		su1.setBounds(100, 140, 20, 20);
 		lie1.setBounds(100, 160, 240, 10);
 		bgcolor.setBounds(0, 125, 500, 300);
-		text4.setBounds(15, 300, 80, 20);
+		text4.setBounds(15, 300, 200, 20);
 		text5.setBounds(180, 285, 120, 20);
 		submit.setBounds(100, 280, 242, 35);
 		fp.setBounds(355, 290, 30, 30);
@@ -87,13 +87,11 @@ public class QRcodeLog extends JFrame implements MouseListener {
 
 		submit.setBackground(new Color(5, 186, 251));
 		submit.setOpaque(true);
-		text4.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
 		// 事件区域
 		jan.addMouseListener(this);
 		bi.addMouseListener(this);
 		user.addMouseListener(this);
-		text4.addMouseListener(this);
 		submit.addMouseListener(this);
 		fp.addMouseListener(this);
 		ma.addMouseListener(this);
@@ -112,8 +110,8 @@ public class QRcodeLog extends JFrame implements MouseListener {
 		user.addFocusListener(new FocusListener() {
 
 			public void focusLost(FocusEvent e) {// 失去焦点
-				su1.setIcon(new ImageIcon("src//main//resources//image//1.png"));
-				lie1.setIcon(new ImageIcon("src//main//resources//image//直线2.png"));
+				su1.setIcon(new javax.swing.ImageIcon("src//main//resources//image//1.png"));
+				lie1.setIcon(new javax.swing.ImageIcon("src//main//resources//image//直线2.png"));
 				c = 0;
 				if (user.getText().isEmpty()) {// 判断是否为空（为了设置默认提示语）
 					user.setForeground(Color.gray);
@@ -123,11 +121,11 @@ public class QRcodeLog extends JFrame implements MouseListener {
 
 			public void focusGained(FocusEvent e) {// 得到焦点
 				user.setForeground(Color.black);
-				lie1.setIcon(new ImageIcon("src//main//resources//image//直线3.png"));
+				lie1.setIcon(new javax.swing.ImageIcon("src//main//resources//image//直线3.png"));
 				a = 1;
 				c = 1;
 				b = 0;
-				su1.setIcon(new ImageIcon("src//main//resources//image//1.png"));
+				su1.setIcon(new javax.swing.ImageIcon("src//main//resources//image//1.png"));
 				if (user.getText().equals("账号")) {
 					user.setText("");
 				} else {
@@ -178,9 +176,6 @@ public class QRcodeLog extends JFrame implements MouseListener {
 			origin.y = e.getY();
 		} else if (e.getSource() == bi) {
 			System.exit(0);
-		} else if (e.getSource() == text4) {
-			dispose();
-			new TableRegister();
 		} else if (e.getSource() == ma) {
 			dispose();
 			new PC_UI();
@@ -200,14 +195,12 @@ public class QRcodeLog extends JFrame implements MouseListener {
 			an2.setOpaque(true);
 		} else if (e.getSource() == user) {
 			if (a == 0 && c == 0) {
-				lie1.setIcon(new ImageIcon("src//main//resources//image//直线4.png"));
+				lie1.setIcon(new javax.swing.ImageIcon("src//main//resources//image//直线4.png"));
 			}
-		} else if (e.getSource() == text4) {
-			text4.setForeground(Color.GRAY);
 		} else if (e.getSource() == fp) {
-			fp.setIcon(new ImageIcon("src//main//resources//image//fingerprint.png"));
+			fp.setIcon(new javax.swing.ImageIcon("src//main//resources//image//fingerprint.png"));
 		}else if (e.getSource() == ma) {
-			ma.setIcon(new ImageIcon("src//main//resources//image//lock.png"));
+			ma.setIcon(new javax.swing.ImageIcon("src//main//resources//image//lock.png"));
 		}
 	}
 
@@ -218,14 +211,12 @@ public class QRcodeLog extends JFrame implements MouseListener {
 			an2.setOpaque(false);
 		} else if (e.getSource() == user) {
 			if (a == 0) {
-				lie1.setIcon(new ImageIcon("src//main//resources//image//直线2.png"));
+				lie1.setIcon(new javax.swing.ImageIcon("src//main//resources//image//直线2.png"));
 			}
-		} else if (e.getSource() == text4) {
-			text4.setForeground(new Color(170, 170, 170));
 		} else if (e.getSource() == fp) {
-			fp.setIcon(new ImageIcon("src//main//resources//image//fingerprint.png"));
+			fp.setIcon(new javax.swing.ImageIcon("src//main//resources//image//fingerprint.png"));
 		} else if (e.getSource() == ma) {
-			ma.setIcon(new ImageIcon("src//main//resources//image//lock.png"));
+			ma.setIcon(new javax.swing.ImageIcon("src//main//resources//image//lock.png"));
 		}
 
 	}
