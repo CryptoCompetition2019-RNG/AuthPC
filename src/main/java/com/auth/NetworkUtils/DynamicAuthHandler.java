@@ -66,12 +66,12 @@ public class DynamicAuthHandler extends AbstractHandler {
         }
         ThreadWrapper.setTimeoutAync(() ->{
             for (int tryTimes = 0; !this.dynamicAuthCall3(); tryTimes++) {
-                if(tryTimes >= 60/NetworkContant.retryTime){
+                if(tryTimes >= 60/ NetworkConstant.retryInterval){
                     logger.error("Please scan QRCode in 1 min.");
                     assert false;
                 }
                 try {
-                    Thread.sleep(NetworkContant.retryTime);
+                    Thread.sleep(NetworkConstant.retryInterval);
                 } catch (Exception e){
                     logger.error(e.toString());
                     return;

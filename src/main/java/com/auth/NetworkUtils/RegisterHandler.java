@@ -1,5 +1,6 @@
 package com.auth.NetworkUtils;
 
+import com.auth.Wrapper.QRCodeConstant;
 import com.auth.Wrapper.QRCodeWrapper;
 
 import java.awt.image.BufferedImage;
@@ -12,7 +13,7 @@ public class RegisterHandler extends AbstractHandler{
     private String username;
 
     private boolean pcGenerateQRCode(){
-        qrcodeImage = QRCodeWrapper.createQRCode(username);
+        qrcodeImage = QRCodeWrapper.createQRCode(username + QRCodeConstant.RegisterQrCode);
         return qrcodeImage != null;
     }
 

@@ -1,7 +1,9 @@
 package com.auth.Wrapper;
 
-import com.google.zxing.BarcodeFormat;
+import com.google.zxing.*;
+import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.common.BitMatrix;
+import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,5 +39,17 @@ public class QRCodeWrapper {
             }
         }
         return bufferedImage;
+    }
+
+    public static String parseQRCode(BufferedImage bufferedImage) {
+        LuminanceSource luminanceSource = new BufferedImageLuminanceSource(bufferedImage);
+        HybridBinarizer hybridBinarizer = new HybridBinarizer(luminanceSource);
+        BinaryBitmap binaryBitmap = new BinaryBitmap(hybridBinarizer);
+        try{
+            Result result = (new MultiFormatReader()).decode(binaryBitmap);
+            return result.getText();
+        } catch (NotFoundException nfe) {
+            return null;
+        }
     }
 }
