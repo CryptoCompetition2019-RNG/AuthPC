@@ -15,13 +15,14 @@ public class SessionKeyHandler extends AbstractHandler {
 
     private boolean negotiateCall1() {
         try {
-            JSONObject response = HttpUtil.sendPostRequest("/negotiate_key1/", new JSONObject(""));
+            JSONObject response = HttpUtil.sendPostRequest("/negotiate_key1/", new JSONObject("{}"));
             if (response == null) return false;
-            this.p = new BigInteger(response.getString("p"), 16);
-            this.g = new BigInteger(response.getString("g"), 16);
+            JSONObject responseData = response.getJSONObject("data");
+            this.p = new BigInteger(responseData.getString("p"), 16);
+            this.g = new BigInteger(responseData.getString("g"), 16);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.toString());
             return false;
         }
     }
@@ -32,12 +33,12 @@ public class SessionKeyHandler extends AbstractHandler {
         try {
             JSONObject requset = new JSONObject();
             requset.put("data", message);
-            JSONObject response = HttpUtil.sendPostRequest("/negotiate_key2/", new JSONObject(""));
+            JSONObject response = HttpUtil.sendPostRequest("/negotiate_key2/", requset);
             if(response == null) return false;
             sharedSecret = (new BigInteger(response.getString("data"), 16)).modPow(mySecret, p);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.toString());
             return false;
         }
     }
