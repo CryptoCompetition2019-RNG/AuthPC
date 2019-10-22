@@ -7,5 +7,5 @@ public interface NetworkConstant {
 
     Integer readTimeout = 20000;
 
-    int retryInterval = 2;
+    int retryInterval = 2000;
 }

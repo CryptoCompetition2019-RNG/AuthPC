@@ -5,6 +5,7 @@ import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Random;
 
 public class SessionKeyHandler extends AbstractHandler {
@@ -56,6 +57,14 @@ public class SessionKeyHandler extends AbstractHandler {
             return;
         }
         this.completeStatus = true;
+    }
+
+    public byte[] getBytesSM4Key() {
+        byte[] bintArray = sharedSecret.toByteArray();
+        if (bintArray[0] == 0) {
+            bintArray = Arrays.copyOfRange(bintArray, 1, bintArray.length);
+        }
+        return ConvertUtils.zeroRPad(bintArray, 16);
     }
 
     public String getSM4Key() {
