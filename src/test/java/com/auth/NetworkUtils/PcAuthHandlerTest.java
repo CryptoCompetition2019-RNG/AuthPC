@@ -1,6 +1,7 @@
 package com.auth.NetworkUtils;
 
 import com.auth.Wrapper.ConvertUtils;
+import com.auth.Wrapper.QRCodeConstant;
 import com.auth.Wrapper.QRCodeWrapper;
 import com.jd.blockchain.utils.io.BytesUtils;
 import org.apache.commons.codec.binary.Hex;
@@ -21,27 +22,23 @@ public class PcAuthHandlerTest {
         PcAuthHandler pcAuthHandler = new PcAuthHandler(username, password);
         BufferedImage bufferedImage = pcAuthHandler.getQrcodeImage();
         assertNotNull(bufferedImage);
-        // 应该在界面上展示这个二维码
-        // 忙等待。用户应该在一分钟内扫描二维码，否则回抛出 assert 异常
+        // todo: 应该在界面上展示这个二维码。用户应该在一分钟内扫描二维码
 
-        // todo: 模拟用户扫描二维码并且向后端传送数据
-        String qrMessage = QRCodeWrapper.parseQRCode(bufferedImage);
-        assertNotNull(qrMessage);
-        assertEquals(qrMessage.length(), 128);
-        assertEquals(qrMessage.substring(0, 64), username);
-        String randomValue = qrMessage.substring(64);
-        this.pretentMobile(username, randomValue);
+        this.mockMobile(bufferedImage); // todo: 模拟用户扫描二维码并且向后端传送数据
 
-        pcAuthHandler.checkerThread.start();
-        try {
-            pcAuthHandler.checkerThread.join();
-        } catch (InterruptedException ie) { fail(); }
+        assertTrue(pcAuthHandler.checkIfScaned()); // todo: PC 端展示了完二维码图片后调用这个方法，不断向后端请求是否扫码完成
         assertTrue(pcAuthHandler.checkStatus());
     }
 
-    private void pretentMobile(String username, String randomValue) {
+    private void mockMobile(BufferedImage bufferedImage) {
+        String qrMessage = QRCodeWrapper.parseQRCode(bufferedImage);
+        assertNotNull(qrMessage);
+        assertEquals(qrMessage.length(), 128 + 1);
+        String username = qrMessage.substring(0, 64);
+        String randomValue = qrMessage.substring(64, 128);
+        assertEquals(qrMessage.substring(128), QRCodeConstant.PcQrCode);
         try {
-            byte[] userSaltKey = Hex.decodeHex("9279f34f1cee0d2dc11ed5916d632da7");
+            byte[] userSaltKey = Hex.decodeHex("9185c9d112d6515a2621c623e9cf2afa");
             assertEquals(username.length(), 64);
             assertEquals(randomValue.length(), 64);
             assertEquals(userSaltKey.length, 16);

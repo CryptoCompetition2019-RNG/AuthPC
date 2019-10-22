@@ -1,82 +1,68 @@
 package com.auth.NetworkUtils;
 
+import com.auth.Wrapper.ConvertUtils;
+import com.auth.Wrapper.QRCodeConstant;
 import com.auth.Wrapper.QRCodeWrapper;
-import com.auth.Wrapper.SM4Wrapper;
-import com.auth.Wrapper.ThreadWrapper;
+import org.apache.commons.codec.binary.Hex;
 import org.json.JSONObject;
+import org.zz.gmhelper.SM4Util;
 
 import java.awt.image.BufferedImage;
 
 public class DynamicAuthHandler extends AbstractHandler {
     private String username;
-    private String qrMessage;
     private BufferedImage qrcodeImage;
-
-    private SM4Wrapper sm4Wrapper = new SM4Wrapper();
     private SessionKeyHandler sessionKeyHandler;
 
     public BufferedImage getQrcodeImage() { return qrcodeImage; }
+    public byte[] getSm4SessionKey() { return sessionKeyHandler.getBytesSM4Key(); }
 
-    private boolean dynamicAuthCall1(){
-        byte[] sm4_id = sm4Wrapper.encrypt(sessionKeyHandler.getSM4Key().getBytes(), username.getBytes());
-
+    private boolean dynamicAuthCall1() {
+        byte[] sm4SessionKey = sessionKeyHandler.getBytesSM4Key();
         try {
-            JSONObject request = new JSONObject();
-            request.put("data", sm4_id);
+            byte[] cipherRequest = SM4Util.encrypt_Ecb_NoPadding(sm4SessionKey, username.getBytes());
+            JSONObject request = new JSONObject() {{
+                put("data", Hex.encodeHexString(cipherRequest));
+            }};
             JSONObject repsonse = HttpUtil.sendPostRequest("/dynamicauth_api1/", request);
-            if (repsonse == null){
-                logger.error("Network error!");
-                return false;
-            }
-            qrMessage = repsonse.getString("data");
-            return true;
-        } catch (Exception e){
+            if ((repsonse == null) || (repsonse.getInt("code") != 0)) return false;
+            String qrMessage = username + repsonse.getString("data") + QRCodeConstant.DynamicQrCode;
+            qrcodeImage = QRCodeWrapper.createQRCode(qrMessage);
+            return qrcodeImage != null;
+        } catch (Exception e) {
             logger.error(e.toString());
             return false;
         }
     }
 
-    private boolean dynamicAuthGenerateQRCode(){
-        qrcodeImage = QRCodeWrapper.createQRCode(qrMessage);
-        return qrcodeImage != null;
-    }
-
-    private boolean dynamicAuthCall3(){
+    private boolean dynamicAuthCall3() {
         JSONObject emptyRequest = new JSONObject();
         JSONObject response = HttpUtil.sendPostRequest("/dynamicauth_api3/", emptyRequest);
         return (response != null) && (response.getInt("code") == 0);
     }
 
-    public DynamicAuthHandler(String _username_){
-        username = _username_;
+    public DynamicAuthHandler(String _username_) {
+        username = ConvertUtils.zeroRPad(_username_, 64);
 
         sessionKeyHandler = new SessionKeyHandler();
-        if(!sessionKeyHandler.checkStatus()){
+        if (!sessionKeyHandler.checkStatus()) {
             logger.error("Failed when negotiate session key.");
             return;
         }
 
-        if(!dynamicAuthCall1()){
+        if (!dynamicAuthCall1()) {
             logger.error("Failed when dynamic auth call step 1");
             return;
         }
-        if(!dynamicAuthGenerateQRCode()){
-            logger.error("Failed when generate QRCode.");
-            return;
+    }
+
+    public boolean checkIfScaned() {
+        for (int tryTimes = 0; !this.dynamicAuthCall3(); tryTimes++) {
+            if (tryTimes >= 60*1000 / NetworkConstant.retryInterval) { return false; }
+            try { Thread.sleep(NetworkConstant.retryInterval); }
+            catch (Exception e) { return false; }
         }
-        ThreadWrapper.setTimeoutAync(() ->{
-            for (int tryTimes = 0; !this.dynamicAuthCall3(); tryTimes++) {
-                if(tryTimes >= 60/ NetworkConstant.retryInterval){
-                    logger.error("Please scan QRCode in 1 min.");
-                    assert false;
-                }
-                try {
-                    Thread.sleep(NetworkConstant.retryInterval);
-                } catch (Exception e){
-                    logger.error(e.toString());
-                    return;
-                }
-            }
-        }, 0);
+        this.completeStatus = true;
+        return true;
     }
 }

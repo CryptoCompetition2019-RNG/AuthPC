@@ -17,7 +17,7 @@ public class RegisterHandlerTest {
 
         BufferedImage qrcodeImage = registerHandler.getQrcodeImage();
         assertNotNull(qrcodeImage);
-        // 应该在界面上展示二维码，给手机端扫描
+        // todo 应该在界面上展示二维码，给手机端扫描
 
         String qrMessage = QRCodeWrapper.parseQRCode(qrcodeImage);
         assertEquals(qrMessage, username + QRCodeConstant.RegisterQrCode);
