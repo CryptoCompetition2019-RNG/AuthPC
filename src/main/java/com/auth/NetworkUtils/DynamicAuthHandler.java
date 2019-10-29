@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import org.zz.gmhelper.SM4Util;
 
 import java.awt.image.BufferedImage;
+import java.nio.charset.StandardCharsets;
 
 public class DynamicAuthHandler extends AbstractHandler {
     private String username;
@@ -15,12 +16,14 @@ public class DynamicAuthHandler extends AbstractHandler {
     private SessionKeyHandler sessionKeyHandler;
 
     public BufferedImage getQrcodeImage() { return qrcodeImage; }
-    public byte[] getSm4SessionKey() { return sessionKeyHandler.getBytesSM4Key(); }
+    public byte[] getSm4SessionKey() { return sessionKeyHandler.getSM4Key(); }
 
     private boolean dynamicAuthCall1() {
-        byte[] sm4SessionKey = sessionKeyHandler.getBytesSM4Key();
+        byte[] sm4SessionKey = sessionKeyHandler.getSM4Key();
         try {
-            byte[] cipherRequest = SM4Util.encrypt_Ecb_NoPadding(sm4SessionKey, username.getBytes());
+            byte[] cipherRequest = SM4Util.encrypt_Ecb_NoPadding(
+                    sm4SessionKey, username.getBytes(StandardCharsets.US_ASCII)
+            );
             JSONObject request = new JSONObject() {{
                 put("data", Hex.encodeHexString(cipherRequest));
             }};

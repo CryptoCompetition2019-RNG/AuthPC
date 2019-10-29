@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.zz.gmhelper.SM4Util;
 
 import java.awt.image.BufferedImage;
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -39,8 +40,8 @@ public class DynamicAuthHandlerTest {
             byte[] userSaltKey = Hex.decodeHex("9185c9d112d6515a2621c623e9cf2afa");
             byte[] plainiRandom = SM4Util.decrypt_Ecb_NoPadding(userSaltKey, cipherRandom);
 
-            byte[] username = qrMessage.substring(0, 64).getBytes();
-            byte[] hashIMEI = "f20e4a1d45bf4935274a262820645479ed7e46dd289e6c6ff04e8aadaad73474".getBytes();
+            byte[] username = qrMessage.substring(0, 64).getBytes(StandardCharsets.US_ASCII);
+            byte[] hashIMEI = "f20e4a1d45bf4935274a262820645479ed7e46dd289e6c6ff04e8aadaad73474".getBytes(StandardCharsets.US_ASCII);
 
             byte[] plainRequest = ByteUtils.concatenate(ByteUtils.concatenate(username, hashIMEI), plainiRandom);
             byte[] cipherRequest = SM4Util.encrypt_Ecb_NoPadding(sm4SessionKey, plainRequest);

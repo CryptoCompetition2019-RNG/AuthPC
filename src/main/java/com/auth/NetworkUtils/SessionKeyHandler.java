@@ -59,15 +59,11 @@ public class SessionKeyHandler extends AbstractHandler {
         this.completeStatus = true;
     }
 
-    public byte[] getBytesSM4Key() {
+    public byte[] getSM4Key() {
         byte[] bintArray = sharedSecret.toByteArray();
         if (bintArray[0] == 0) {
             bintArray = Arrays.copyOfRange(bintArray, 1, bintArray.length);
         }
         return ConvertUtils.zeroRPad(bintArray, 16);
-    }
-
-    public String getSM4Key() {
-        return ConvertUtils.zeroRPad(sharedSecret.toString(16).substring(64), 64);
     }
 }

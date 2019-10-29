@@ -9,6 +9,7 @@ import org.zz.gmhelper.SM4Util;
 
 import java.awt.image.BufferedImage;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -32,9 +33,9 @@ public class PcAuthHandler extends AbstractHandler {
     }
 
     private boolean pcAuthCall2() {
-        byte[] sm4SessionKey = sessionKeyHandler.getBytesSM4Key();
+        byte[] sm4SessionKey = sessionKeyHandler.getSM4Key();
         try {
-            byte[] cipherRequest = SM4Util.encrypt_Ecb_NoPadding(sm4SessionKey, username.getBytes());
+            byte[] cipherRequest = SM4Util.encrypt_Ecb_NoPadding(sm4SessionKey, username.getBytes(StandardCharsets.US_ASCII));
 
             System.out.println(String.format("plain: %s", username));
             System.out.println(String.format("key: %s", Hex.encodeHexString(sm4SessionKey)));
@@ -59,7 +60,7 @@ public class PcAuthHandler extends AbstractHandler {
 
     private void calculateBpwd() {
         BigInteger A = new BigInteger(A_pwd, 16);
-        BigInteger hashPassword = new BigInteger(SM3Util.hash(password.getBytes()));
+        BigInteger hashPassword = new BigInteger(SM3Util.hash(password.getBytes(StandardCharsets.US_ASCII)));
         BigInteger exponent = new BigInteger(
                 BytesUtils.concat(A.xor(hashPassword).toByteArray(), hashPassword.toByteArray())
         );
@@ -70,9 +71,11 @@ public class PcAuthHandler extends AbstractHandler {
     }
 
     private boolean pcAuthCall3() {
-        byte[] sm4SessionKey = sessionKeyHandler.getBytesSM4Key();
+        byte[] sm4SessionKey = sessionKeyHandler.getSM4Key();
         try {
-            byte[] cipherRequest = SM4Util.encrypt_Ecb_NoPadding(sm4SessionKey, (randomToken + B_pwd).getBytes());
+            byte[] cipherRequest = SM4Util.encrypt_Ecb_NoPadding(
+                    sm4SessionKey, (randomToken + B_pwd).getBytes(StandardCharsets.US_ASCII)
+            );
 
             JSONObject request = new JSONObject() {{
                 put("data", Hex.encodeHexString(cipherRequest));

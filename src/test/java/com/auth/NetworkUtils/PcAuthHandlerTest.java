@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.zz.gmhelper.SM4Util;
 
 import java.awt.image.BufferedImage;
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -45,8 +46,12 @@ public class PcAuthHandlerTest {
 
             SessionKeyHandler sessionKeyHandler = new SessionKeyHandler();
             assertTrue(sessionKeyHandler.checkStatus());
-            final byte[] cipher1 = SM4Util.encrypt_Ecb_NoPadding(sessionKeyHandler.getBytesSM4Key(), username.getBytes());
-            final byte[] cipher2 = SM4Util.encrypt_Ecb_NoPadding(userSaltKey, randomValue.getBytes());
+            final byte[] cipher1 = SM4Util.encrypt_Ecb_NoPadding(
+                    sessionKeyHandler.getSM4Key(), username.getBytes(StandardCharsets.US_ASCII)
+            );
+            final byte[] cipher2 = SM4Util.encrypt_Ecb_NoPadding(
+                    userSaltKey, randomValue.getBytes(StandardCharsets.US_ASCII)
+            );
 
             JSONObject request = new JSONObject(){{
                 put("data", Hex.encodeHexString(BytesUtils.concat(cipher1, cipher2)));
