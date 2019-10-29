@@ -39,20 +39,23 @@ public class PcAuthHandlerTest {
         String randomValue = qrMessage.substring(64, 128);
         assertEquals(qrMessage.substring(128), QRCodeConstant.PcQrCode);
         try {
-            byte[] userSaltKey = Hex.decodeHex("9185c9d112d6515a2621c623e9cf2afa");
+            SessionKeyHandler sessionKeyHandler = new SessionKeyHandler();
+            assertTrue(sessionKeyHandler.checkStatus());
+
+            JSONObject askSaltRequest = new JSONObject(){{ put("data", username); }};
+            JSONObject askSaltResponse = HttpUtil.sendPostRequest("/ask_salt/",askSaltRequest);
+            assertTrue((askSaltResponse != null) && (askSaltResponse.getInt("code") == 0));
+            byte[] userSaltKey = Hex.decodeHex(askSaltResponse.getString("data"));
             assertEquals(username.length(), 64);
             assertEquals(randomValue.length(), 64);
             assertEquals(userSaltKey.length, 16);
 
-            SessionKeyHandler sessionKeyHandler = new SessionKeyHandler();
-            assertTrue(sessionKeyHandler.checkStatus());
             final byte[] cipher1 = SM4Util.encrypt_Ecb_NoPadding(
                     sessionKeyHandler.getSM4Key(), username.getBytes(StandardCharsets.US_ASCII)
             );
             final byte[] cipher2 = SM4Util.encrypt_Ecb_NoPadding(
                     userSaltKey, randomValue.getBytes(StandardCharsets.US_ASCII)
             );
-
             JSONObject request = new JSONObject(){{
                 put("data", Hex.encodeHexString(BytesUtils.concat(cipher1, cipher2)));
             }};

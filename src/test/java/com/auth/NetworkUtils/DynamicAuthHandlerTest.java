@@ -36,19 +36,20 @@ public class DynamicAuthHandlerTest {
         assertEquals(qrMessage.substring(64 + 128), QRCodeConstant.DynamicQrCode);
 
         try {
-            byte[] cipherRandom = Hex.decodeHex(qrMessage.substring(64, 64 + 128));
-            byte[] userSaltKey = Hex.decodeHex("9185c9d112d6515a2621c623e9cf2afa");
-            byte[] plainiRandom = SM4Util.decrypt_Ecb_NoPadding(userSaltKey, cipherRandom);
+            String username = qrMessage.substring(0, 64);
+            JSONObject askSaltRequest = new JSONObject(){{ put("data", username); }};
+            JSONObject askSaltResponse = HttpUtil.sendPostRequest("/ask_salt/",askSaltRequest);
+            assertTrue((askSaltResponse != null) && (askSaltResponse.getInt("code") == 0));
+            byte[] userSaltKey = Hex.decodeHex(askSaltResponse.getString("data"));
 
-            byte[] username = qrMessage.substring(0, 64).getBytes(StandardCharsets.US_ASCII);
+            byte[] cipherRandom = Hex.decodeHex(qrMessage.substring(64, 64 + 128));
+            byte[] plainiRandom = SM4Util.decrypt_Ecb_NoPadding(userSaltKey, cipherRandom);
             byte[] hashIMEI = "f20e4a1d45bf4935274a262820645479ed7e46dd289e6c6ff04e8aadaad73474".getBytes(StandardCharsets.US_ASCII);
 
-            byte[] plainRequest = ByteUtils.concatenate(ByteUtils.concatenate(username, hashIMEI), plainiRandom);
+            byte[] plainRequest = ByteUtils.concatenate(
+                    username.getBytes(StandardCharsets.US_ASCII), ByteUtils.concatenate(hashIMEI, plainiRandom)
+            );
             byte[] cipherRequest = SM4Util.encrypt_Ecb_NoPadding(sm4SessionKey, plainRequest);
-            System.out.println(String.format("plain: %s", Hex.encodeHexString(plainRequest)));
-            System.out.println(String.format("key: %s", Hex.encodeHexString(sm4SessionKey)));
-            System.out.println(String.format("cipher: %s", Hex.encodeHexString(cipherRequest)));
-
             JSONObject request = new JSONObject(){{ put("data", Hex.encodeHexString(cipherRequest)); }};
             JSONObject response = HttpUtil.sendPostRequest("/dynamicauth_api2/", request);
             assertTrue((response != null) && (response.getInt("code") == 0));

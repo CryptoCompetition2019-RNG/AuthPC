@@ -37,9 +37,6 @@ public class PcAuthHandler extends AbstractHandler {
         try {
             byte[] cipherRequest = SM4Util.encrypt_Ecb_NoPadding(sm4SessionKey, username.getBytes(StandardCharsets.US_ASCII));
 
-            System.out.println(String.format("plain: %s", username));
-            System.out.println(String.format("key: %s", Hex.encodeHexString(sm4SessionKey)));
-            System.out.println(String.format("cipher: %s", Hex.encodeHexString(cipherRequest)));
             JSONObject request = new JSONObject() {{
                 put("data", Hex.encodeHexString(cipherRequest));
             }};
